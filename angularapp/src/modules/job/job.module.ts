@@ -8,6 +8,7 @@ import { JobActionItemComponent } from './components/action-item/job-action-item
 import { JobDashboardComponent } from './components/job-dashboard/job-dashboard.component';
 import { StatusNamePipe } from './pipes/status-name.pipe';
 import { StatusColorDirective } from './directives/status-color.directive';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { StatusColorDirective } from './directives/status-color.directive';
     JobDashboardComponent,
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    FormsModule,
   ],
   
 

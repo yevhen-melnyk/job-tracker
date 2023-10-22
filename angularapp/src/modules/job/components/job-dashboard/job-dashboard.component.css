@@ -1,0 +1,20 @@
+.title {
+  font-size: 26px;
+  color: white;
+  margin: 7px 0 0 0;
+  font-family: 'Noto Serif', serif;
+}
+
+.dashboard-header {
+  display: flex;
+  background: #3e464d;
+  padding-bottom: 10px;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+
+

@@ -92,6 +92,7 @@
 
 .arrow {
   transition: transform 0.3s;
+  display: inline-block
 }
 
   .arrow.expanded {

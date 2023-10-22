@@ -1,7 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FetchService } from '../../../../services/fetch-service';
+import { ApiService } from '../../../../services/api-service';
 import { JobResponse } from '../../../../models/job.model';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, filter, takeUntil } from 'rxjs';
+import { SignalrService } from '../../../../services/signalr-service';
 
 @Component({
   selector: 'app-job-list',
@@ -12,7 +13,7 @@ export class JobListComponent implements OnInit, OnDestroy {
 
   jobs: JobResponse[] = [];
   onDestroy$ = new Subject();
-  constructor(private fetchService: FetchService) { }
+  constructor(private fetchService: ApiService, private jobHub: SignalrService) { }
 
   ngOnInit(): void {
     this.fetchService.getJobs()
@@ -20,6 +21,16 @@ export class JobListComponent implements OnInit, OnDestroy {
       .subscribe((jobs) => {
         this.jobs = jobs;
       });
+
+    this.jobHub.jobAdded$.pipe(takeUntil(this.onDestroy$),
+      filter(Boolean)
+    )
+      .subscribe((job: JobResponse) => {
+        if (!this.jobs.some(j => j.id === job.id)) {
+          this.jobs.push(job);
+        }
+      }
+      );
   }
 
   ngOnDestroy(): void {

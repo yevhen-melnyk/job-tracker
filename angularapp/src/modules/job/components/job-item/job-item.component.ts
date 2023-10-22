@@ -44,6 +44,15 @@ export class JobItemComponent implements OnDestroy {
     return this.job?.state == JobState.InProgress;
   }
 
+  get jobsButtonText() {
+    if (this.stepsExpanded) {
+      return 'Hide Steps';
+    }
+    else {
+      return 'Show Steps';
+    }
+  }
+
   ngOnDestroy(): void {
     this.onDestroy$.next(null);
     this.onDestroy$.complete();

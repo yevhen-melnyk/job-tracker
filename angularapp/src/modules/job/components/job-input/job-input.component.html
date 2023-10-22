@@ -1,1 +1,17 @@
-<p>job-input works!</p>
+<div class="create-text">
+  <div class="bolder-create-text">+</div> Create a Job
+</div>
+
+<div *ngIf="jobEditorActive" class="job-editor-container">
+  <div>
+    <div class="button">
+      Random predefined job
+    </div>
+    <div class="button">
+      Save
+    </div>
+
+  </div>
+  <p>Enter job json</p>
+  <input type="text" [(ngModel)]="jobJSON"/>
+</div>
