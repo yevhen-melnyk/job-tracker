@@ -4,9 +4,14 @@
     <span [appStatusColor]="job?.state" [type]="'job'" class="status-circle"></span>
     <span class="status-text">{{ job?.state | statusName:'job' }}</span>
   </div>
+  <div class="actions">
     <div class="steps-header" (click)="toggleSteps()">
       <p>Show job steps: <span class="arrow" [ngClass]="{'expanded': stepsExpanded}">&#x25BC;</span></p>
     </div>
+    <div class="stop-button" (click)="stopJob()" *ngIf="canStop">
+      <p>Stop the job</p>
+    </div>
+  </div>
 
   <div class="steps-list" [class.expanded]="stepsExpanded">
     <div *ngIf="stepsExpanded">

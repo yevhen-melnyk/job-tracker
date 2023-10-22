@@ -9,10 +9,21 @@
     flex: 1 0 100%; 
     margin: 4px 0; 
   }
+
+
+  app-job-item {
+    flex: 1 1 100%;
+    margin: 4px;
+  }
 }
 
 app-job-item {
   flex: 0 0 calc(50% - 8px);
+  margin: 4px;
+}
+
+app-job-item.expanded {
+  flex: 1 0 100%;
   margin: 4px;
 }
 

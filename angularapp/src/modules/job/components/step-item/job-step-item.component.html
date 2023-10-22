@@ -1,5 +1,9 @@
-<div class="step-container" (click)="debugClick()">
-  <p class="title">Step {{step?.index}}</p>
+<div class="step-container">
+  <div class="title-container">
+    <span class="title">Step {{step?.index}}</span>
+    <span [appStatusColor]="step?.state" [type]="'step'" class="status-circle"></span>
+    <span class="status-text">{{ step?.state | statusName:'step' }}</span>
+  </div>
   <div class="actions-container">
     <app-action-item *ngFor="let action of step?.actions" [action]="action"></app-action-item>
   </div>

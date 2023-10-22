@@ -35,13 +35,13 @@ export class StatusColorDirective implements OnChanges {
 
     switch (this.type) {
       case 'job':
-        color = this.appStatusColor && this.jobColors[this.appStatusColor as JobState] || 'black';
+        color = this.appStatusColor !== undefined && this.jobColors[this.appStatusColor as JobState] || 'black';
         break;
       case 'step':
-        color = this.appStatusColor && this.stepColors[this.appStatusColor as StepState] || 'black';
+        color = this.appStatusColor !== undefined && this.stepColors[this.appStatusColor as StepState] || 'black';
         break;
       case 'action':
-        color = this.appStatusColor && this.actionColors[this.appStatusColor as ActionState] || 'black';
+        color = this.appStatusColor !== undefined && this.actionColors[this.appStatusColor as ActionState] || 'black';
         break;
       default:
         color = 'black';

@@ -22,5 +22,20 @@
   flex-wrap: wrap;
   max-height: 220px;
   overflow-y: hidden;
-  overflow-x: scroll
+  overflow-x: auto;
+}
+
+.title-container {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  font-family: Arial, sans-serif;
+}
+
+.status-circle {
+  width: 16px;
+  height: 16px;
+  margin: 0 10px;
+  border-radius: 50%;
+  display: inline-block;
 }
