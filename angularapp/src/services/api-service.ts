@@ -9,10 +9,14 @@ import { environment } from '../environments/environment';
 @Injectable({
   providedIn: 'root'
 })
-export class FetchService {
+export class ApiService {
 constructor(private http: HttpClient) { }
 
   getJobs(): Observable<JobResponse[]> {
     return this.http.get<JobResponse[]>(environment.apiUrl + '/jobs');
+  }
+
+  createJob(job: JobResponse): Observable<JobResponse> {
+    return this.http.post<JobResponse>(environment.apiUrl + '/jobs', job);
   }
 }
