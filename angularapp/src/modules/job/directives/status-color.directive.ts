@@ -8,6 +8,7 @@ export class StatusColorDirective implements OnChanges {
 
   @Input() appStatusColor?: number;
   @Input() type?: string;
+  @Input() opacity: number = 1.0;
   private jobColors = {
     [JobState.InProgress]: '#90CAF9', // Pastel Blue
     [JobState.Success]: '#A5D6A7',   // Pastel Green
@@ -47,6 +48,20 @@ export class StatusColorDirective implements OnChanges {
         color = 'black';
     }
 
+    //set color opacity (color is hexadecimal)
+    let { r, g, b } = this.hexToRgb(color);
+    color = `rgba(${r},${g},${b},${this.opacity})`;
+
     this.renderer.setStyle(this.el.nativeElement, 'background-color', color);
+  }
+
+  // too lazy to rewrite colors to rgb? toss in some wizardry
+  private hexToRgb(hex: string) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+      r: parseInt(result[1], 16),
+      g: parseInt(result[2], 16),
+      b: parseInt(result[3], 16)
+    } : { r: 0, g: 0, b: 0 };
   }
 }

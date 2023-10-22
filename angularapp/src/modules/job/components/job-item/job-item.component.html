@@ -5,7 +5,7 @@
     <span class="status-text">{{ job?.state | statusName:'job' }}</span>
   </div>
   <div class="actions">
-    <div class="steps-header" (click)="toggleSteps()">
+    <div class="steps-button" (click)="toggleSteps()">
       <p>{{jobsButtonText}} <span class="arrow" [ngClass]="{'expanded': stepsExpanded}">&#x25BC;</span></p>
     </div>
     <div class="stop-button" (click)="stopJob()" *ngIf="canStop">

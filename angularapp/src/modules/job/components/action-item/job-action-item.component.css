@@ -17,6 +17,7 @@
   min-height: 30px;
   max-height: 70px;
   margin: 2px;
+  gap: 3px;
 }
 
 .progress-bar {
@@ -26,4 +27,8 @@
   height: 10px;
   background-color: #007BFF;
   transition: width 0.3s ease-in-out;
+}
+
+.title {
+  font-weight: bold;
 }

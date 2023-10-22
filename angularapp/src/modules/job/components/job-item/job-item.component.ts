@@ -40,7 +40,7 @@ export class JobItemComponent implements OnDestroy {
 
   stopJob() { }
 
-  canStop(): boolean {
+  get canStop(): boolean {
     return this.job?.state == JobState.InProgress;
   }
 

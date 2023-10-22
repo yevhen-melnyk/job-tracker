@@ -1,5 +1,5 @@
 <div class="action-container">
-  <span>{{action?.title}}</span> <span> - </span> <span>{{action?.progress?.duration}} / {{ action?.timeConsume}}</span>
+  <span class="title">{{action?.title}}</span> <span> - </span> <span>{{action?.progress?.duration}} / {{ action?.timeConsume}}</span>
 
   <div [appStatusColor]="action?.state" [type]="'action'" class="progress-bar" [style.width]="action?.progress?.percent + '%'"></div>
 </div>
