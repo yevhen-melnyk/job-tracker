@@ -10,7 +10,10 @@ public class JobMappingProfile : Profile
         CreateMap<Job, JobResponse>();
         CreateMap<Step, StepResponse>();
         CreateMap<StepAction, ActionResponse>();
-        CreateMap<Progress, ProgressResponse>();
+        CreateMap<Progress, ProgressResponse>()
+            // get action id from parent
+            .ForMember(dest => dest.ActionId, opt => opt.MapFrom(src => src.Action.Id)
+            );
 
         CreateMap<JobCreateRequest, Job>();
         CreateMap<StepCreateRequest, Step>();

@@ -14,7 +14,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: trustedOrigins,
                       policy =>
                       {
-                          policy.WithOrigins("https://localhost:4200");
+                          policy.AllowAnyHeader().AllowAnyMethod().SetIsOriginAllowed((host) => true).AllowCredentials();
                       });
 });
 
@@ -50,7 +50,7 @@ app.UseAuthorization();
 app.UseCors(trustedOrigins);
 
 // SignalR
-app.MapHub<ProgressHub>("/progressHub");
+app.MapHub<ProgressHub>("api/progressHub");
 
 app.MapControllers();
 app.Run();

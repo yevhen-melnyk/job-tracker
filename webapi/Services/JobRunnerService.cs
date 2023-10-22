@@ -47,9 +47,10 @@ public class JobWorkerService : BackgroundService
         try
         {
             var jobTask = RunJobTask(cancellationToken);
-            var preiodicUpdateTask = RunProgressUpdateTask(cancellationToken);
+            var periodicDBUpdateTask = RunProgressDBUpdateTask(cancellationToken);
+            var periodicSignalRUpdateTask = RunProgressSignalRUpdateTask(cancellationToken);
 
-            await Task.WhenAny(jobTask, preiodicUpdateTask);
+            await Task.WhenAny(jobTask, periodicDBUpdateTask, periodicSignalRUpdateTask);
         }
         catch (Exception ex)
         {
@@ -100,7 +101,7 @@ public class JobWorkerService : BackgroundService
         _logger?.LogInformation("JobTask finished.");
     }
 
-    private async Task RunProgressUpdateTask(CancellationToken cancellationToken)
+    private async Task RunProgressDBUpdateTask(CancellationToken cancellationToken)
     {
         _logger?.LogInformation("Running ProgressUpdateTask...");
 
@@ -109,7 +110,6 @@ public class JobWorkerService : BackgroundService
             while (!cancellationToken.IsCancellationRequested)
             {
                 await _progressBroadcastService.BroadcastProgress(_relevantProgressDictionary);
-                var dbContext = scope.ServiceProvider.GetRequiredService<JobDBContext>();
 
                 if (_relevantProgressDictionary.Count != 0)
                 {
@@ -117,6 +117,25 @@ public class JobWorkerService : BackgroundService
                 }
 
                 await Task.Delay(TimeSpan.FromMilliseconds(_settings.JobDBUpdateInterval), cancellationToken);
+            }
+        }
+
+        _logger?.LogInformation("ProgressUpdateTask finished.");
+    }
+
+
+
+    private async Task RunProgressSignalRUpdateTask(CancellationToken cancellationToken)
+    {
+        _logger?.LogInformation("Running ProgressSignalRUpdateTask...");
+
+        using (var scope = _serviceProvider.CreateScope())
+        {
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                await _progressBroadcastService.BroadcastProgress(_relevantProgressDictionary);
+
+                await Task.Delay(TimeSpan.FromMilliseconds(_settings.SignalRPushInterval), cancellationToken);
             }
         }
 
@@ -167,7 +186,7 @@ public class JobWorkerService : BackgroundService
                 {
                     var stepStatus = await ExecuteStep(step);
                     var completedStates = (new List<StepState>() { StepState.Success, StepState.CompletedWithErrors, StepState.Failed });
-                   
+
                     if (stepStatus == StepState.Failed)
                     {
                         job.State = JobStates.Failed;
@@ -252,8 +271,8 @@ public class JobWorkerService : BackgroundService
                     progress.Duration = action.TimeConsume - progress.Remaining;
                 }
                 progress.End = DateTime.Now;
-                await _progressBroadcastService.BroadcastStepCompletion(action.Step);
                 action.State = ActionState.Success;
+                await _progressBroadcastService.BroadcastActionCompletion(action);
 
             }
             catch (Exception ex)
