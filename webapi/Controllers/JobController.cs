@@ -17,16 +17,21 @@ namespace webapi.Controllers
         private readonly IMapper _mapper;
         private readonly JobsBroadcastService _jobsBroadcastService;
         private readonly ILogger _logger;
+        private readonly IHostedService _jobWorkerService;
 
         public JobsController(JobDBContext context,
                 IMapper mapper,
                 JobsBroadcastService jobsBroadcastService,
-                ILogger<JobsController> logger
+                ILogger<JobsController> logger,
+                IHostedService jobWorkerService
+
             )
         {
             _context = context;
             _mapper = mapper;
             _jobsBroadcastService = jobsBroadcastService;
+            _logger = logger;
+            _jobWorkerService = jobWorkerService;
         }
 
         [HttpPost]
@@ -45,7 +50,6 @@ namespace webapi.Controllers
                     action.Progress = new Progress();
                 }
             }
-
 
             _context.SaveChanges();
 

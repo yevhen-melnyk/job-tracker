@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ElementRef, Input, OnDestroy } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, HostListener, Input, OnDestroy } from '@angular/core';
 import { JobResponse } from '../../../../models/job.model';
 import { Subject, filter, map, takeUntil } from 'rxjs';
 import { SignalrService, StateResponse } from '../../../../services/signalr-service';

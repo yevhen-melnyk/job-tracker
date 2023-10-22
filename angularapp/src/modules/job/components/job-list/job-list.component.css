@@ -1,13 +1,13 @@
 .jobs-list {
   display: flex;
-  flex-wrap: wrap; 
+  flex-wrap: wrap;
   justify-content: space-between;
 }
 
 @media (max-width: 767px) {
   .job-container {
-    flex: 1 0 100%; 
-    margin: 4px 0; 
+    flex: 1 0 100%;
+    margin: 4px 0;
   }
 
 
@@ -22,13 +22,13 @@ app-job-item {
   margin: 4px;
 }
 
-app-job-item.expanded {
-  flex: 1 0 100%;
-  margin: 4px;
-}
+  app-job-item.expanded {
+    flex: 1 0 100%;
+    margin: 4px;
+  }
 
 app-job-input {
-  flex: 1 1 0;
+  flex: 1 0 700px;
   margin: 4px;
   padding: 8px;
   border: 5px dashed #d0d0d0;
@@ -36,6 +36,11 @@ app-job-input {
   background-color: #f9f9f9;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+  cursor: pointer;
   justify-content: center;
 }
+
+  app-job-input:hover {
+    background-color: #f0f0f0;
+  }

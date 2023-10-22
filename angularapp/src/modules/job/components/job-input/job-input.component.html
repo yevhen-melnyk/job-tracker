@@ -2,16 +2,16 @@
   <div class="bolder-create-text">+</div> Create a Job
 </div>
 
-<div *ngIf="jobEditorActive" class="job-editor-container">
-  <div>
-    <div class="button">
+<div  class="job-editor-container" [class.expanded]="jobEditorActive" (click)="stopPropagation($event)">
+  <div class="actions">
+    <div class="button" (click)=" usePredefinedJob() ">
       Random predefined job
     </div>
-    <div class="button">
+    <div class="button" (click)="saveJob()">
       Save
     </div>
 
   </div>
   <p>Enter job json</p>
-  <input type="text" [(ngModel)]="jobJSON"/>
+  <textarea [(ngModel)]="jobJSON"></textarea>
 </div>
