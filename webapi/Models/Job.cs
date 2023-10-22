@@ -4,7 +4,7 @@ namespace webapi.Models
     {
         public int Id { get; set; }
         public string Title { get; set; }
-        public JobState State { get; set; }
+        public JobStates State { get; set; }
         public DateTime? Created { get; set; }
         public DateTime? Started { get; set; }
         public DateTime? Finished { get; set; }

@@ -72,7 +72,7 @@ public class JobWorkerService : BackgroundService
                     var runningJobsIds = new List<int>();
                     var dbContext = scope.ServiceProvider.GetRequiredService<JobDBContext>();
                     var jobsToProcess = await dbContext.Jobs
-                                                      .Where(j => j.State == JobState.InProgress
+                                                      .Where(j => j.State == JobStates.InProgress
                                                           && !runningJobsIds.Contains(j.Id))
                                                       .Take(_semaphore.CurrentCount)
                                                       .ToListAsync();
@@ -154,7 +154,15 @@ public class JobWorkerService : BackgroundService
             try
             {
                 var dbContext = scope.ServiceProvider.GetRequiredService<JobDBContext>();
-                var stepsToExecute = dbContext.Steps.Where(s => s.JobId == job.Id).OrderBy(s => s.Index).ToList();
+
+                job.Started = DateTime.Now;
+                dbContext.Jobs.Update(job);
+                await dbContext.SaveChangesAsync();
+
+
+                var stepsToExecute = dbContext.Steps
+                    .Where(s => s.JobId == job.Id && s.State == StepState.Pending || s.State == StepState.InProgress)
+                    .OrderBy(s => s.Index).ToList();
                 foreach (var step in stepsToExecute)
                 {
                     var stepStatus = await ExecuteStep(step);
@@ -162,13 +170,15 @@ public class JobWorkerService : BackgroundService
                    
                     if (stepStatus == StepState.Failed)
                     {
-                        job.State = JobState.Failed;
+                        job.State = JobStates.Failed;
                         _ = _progressBroadcastService.BroadcastJobCompletion(job);
                         await dbContext.SaveChangesAsync();
                         return;
                     }
                 }
-                job.State = JobState.Success;
+                job.State = JobStates.Success;
+                job.Finished = DateTime.Now;
+                dbContext.Jobs.Update(job);
                 await dbContext.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -188,7 +198,8 @@ public class JobWorkerService : BackgroundService
             try
             {
                 var jobDBContext = scope.ServiceProvider.GetRequiredService<JobDBContext>();
-                var actions = jobDBContext.Actions.Where(a => a.StepId == step.Id).Include("Step").Include("Progress").ToList();
+                var actions = jobDBContext.Actions.Include("Step").Include("Progress")
+                    .Where(a => a.StepId == step.Id && a.State == ActionState.InProgress).ToList();
                 var actionTasks = actions.Select(action => ExecuteAction(action)).ToList();
 
                 await Task.WhenAll(actionTasks);

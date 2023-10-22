@@ -1,6 +1,6 @@
 namespace webapi.Models
 {
-    public enum JobState
+    public enum JobStates
     {
         InProgress,
         Success,

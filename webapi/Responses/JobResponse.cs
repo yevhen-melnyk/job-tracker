@@ -7,6 +7,6 @@ public class JobResponse
 {
     public int Id { get; set; }
     public string Title { get; set; }
-    public JobState State { get; set; }
+    public JobStates State { get; set; }
     public List<StepResponse> Steps { get; set; }
 }
