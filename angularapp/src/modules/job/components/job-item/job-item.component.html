@@ -1,1 +1,16 @@
-<p>job-item works!</p>
+<div class="job-container">
+  <div class="title-container">
+    <span class="job-title">{{job?.title}}</span>
+    <span [appStatusColor]="job?.state" [type]="'job'" class="status-circle"></span>
+    <span class="status-text">{{ job?.state | statusName:'job' }}</span>
+  </div>
+    <div class="steps-header" (click)="toggleSteps()">
+      <p>Show job steps: <span class="arrow" [ngClass]="{'expanded': stepsExpanded}">&#x25BC;</span></p>
+    </div>
+
+  <div class="steps-list" [class.expanded]="stepsExpanded">
+    <div *ngIf="stepsExpanded">
+      <app-step-item *ngFor="let step of job?.steps"></app-step-item>
+    </div>
+  </div>
+</div>

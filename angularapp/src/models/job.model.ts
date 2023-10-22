@@ -3,6 +3,6 @@ import { StepResponse } from './step.model';
 export interface JobResponse {
   id: number;
   title: string;
-  state: string;
+  state: number;
   steps: StepResponse[];
 }

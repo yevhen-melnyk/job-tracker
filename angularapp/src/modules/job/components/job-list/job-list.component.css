@@ -1,0 +1,18 @@
+.jobs-list {
+  display: flex;
+  flex-wrap: wrap; 
+  justify-content: space-between;
+}
+
+@media (max-width: 767px) {
+  .job-container {
+    flex: 1 0 100%; 
+    margin: 4px 0; 
+  }
+}
+
+app-job-item {
+  flex: 0 0 calc(50% - 8px);
+  margin: 4px;
+}
+
