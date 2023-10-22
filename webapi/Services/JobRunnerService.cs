@@ -11,6 +11,7 @@ using webapi.Contexts;
 using Microsoft.Extensions.Options;
 using webapi.SignalR;
 using Microsoft.Extensions.DependencyInjection;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 
 public class JobWorkerService : BackgroundService
@@ -62,6 +63,8 @@ public class JobWorkerService : BackgroundService
     private async Task RunJobTask(CancellationToken cancellationToken)
     {
         _logger?.LogInformation("Running JobTask...");
+        var runningJobTasks = new List<Task>();
+        var runningJobsIds = new List<int>();
 
         while (!cancellationToken.IsCancellationRequested)
         {
@@ -69,8 +72,6 @@ public class JobWorkerService : BackgroundService
             {
                 try
                 {
-                    var runningJobTasks = new List<Task>();
-                    var runningJobsIds = new List<int>();
                     var dbContext = scope.ServiceProvider.GetRequiredService<JobDBContext>();
                     var jobsToProcess = await dbContext.Jobs
                                                       .Where(j => j.State == JobStates.InProgress
@@ -109,8 +110,6 @@ public class JobWorkerService : BackgroundService
         {
             while (!cancellationToken.IsCancellationRequested)
             {
-                await _progressBroadcastService.BroadcastProgress(_relevantProgressDictionary);
-
                 if (_relevantProgressDictionary.Count != 0)
                 {
                     await UpdateDatabaseProgress();
@@ -217,9 +216,17 @@ public class JobWorkerService : BackgroundService
             try
             {
                 var jobDBContext = scope.ServiceProvider.GetRequiredService<JobDBContext>();
+
+                // update the step
+                step.State = StepState.InProgress;
+                jobDBContext.Steps.Update(step);
+                await _progressBroadcastService.BroadcastStepState(step);
+
+                // get all actions for the step to run now
                 var actions = jobDBContext.Actions.Include("Step").Include("Progress")
                     .Where(a => a.StepId == step.Id && a.State == ActionState.InProgress).ToList();
                 var actionTasks = actions.Select(action => ExecuteAction(action)).ToList();
+
 
                 await Task.WhenAll(actionTasks);
 
@@ -236,7 +243,7 @@ public class JobWorkerService : BackgroundService
                     step.State = StepState.CompletedWithErrors;
                 }
 
-                await _progressBroadcastService.BroadcastStepCompletion(step);
+                await _progressBroadcastService.BroadcastStepState(step);
                 await jobDBContext.SaveChangesAsync();
 
             }
@@ -296,15 +303,21 @@ public class JobWorkerService : BackgroundService
             {
                 var actionId = entry.Key;
                 var progress = entry.Value;
+                dbContext.Progresses.Update(progress);
 
-                var action = await dbContext.Actions.FindAsync(actionId);
-                if (action != null)
+                if (progress.Percent == 100)
                 {
-                    action.Progress = progress;
+                    // this is not pretty... if I had more time i'd redesign the dictionary
+                    var updates = new StepAction { Id = actionId,
+                        State = ActionState.Success
+                    };
+                    // Attach the entity and mark it as modified
+                    dbContext.Actions.Attach(updates);
+                    dbContext.Entry(updates).Property(p => p.State).IsModified = true;
                 }
-            }
-            await dbContext.SaveChangesAsync();
 
+
+            }
             foreach (var key in _relevantProgressDictionary.Keys)
             {
                 var progress = _relevantProgressDictionary[key];
@@ -313,6 +326,10 @@ public class JobWorkerService : BackgroundService
                     _relevantProgressDictionary.TryRemove(key, out _);
                 }
             }
+
+            await dbContext.SaveChangesAsync();
+
+            
         }
 
         _logger?.LogInformation("Database progress updated.");

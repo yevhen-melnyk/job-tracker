@@ -23,8 +23,9 @@ public class JobsBroadcastService
     }
 
     // broadcast step completion 
-    public async Task BroadcastStepCompletion(Step step)
+    public async Task BroadcastStepState(Step step)
     {
+        var stateNumber = (int)step.State;
         await _hubContext.Clients.All.SendAsync(MessageTypesEnum.ReceiveStepCompletion.ToString(), step.Id, step.State);
     }
 

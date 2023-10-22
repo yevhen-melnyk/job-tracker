@@ -2,9 +2,9 @@ namespace webapi.Models
 {
     public enum StepState
     {
+        Pending,
         InProgress,
         Success,
-        Pending,
         Failed,
         CompletedWithErrors
     }

@@ -25,13 +25,14 @@ public class JobMappingProfile : Profile
         CreateMap<Step, StepResponse>()
             .ForMember(dest => dest.Actions, opt => opt.MapFrom(src => src.Actions));
 
-        CreateMap<ActionCreateRequest, StepAction>().AfterMap((src, dest) =>
-        {
-            if (dest.Progress == null)
-            {
-                dest.Progress = new Progress();
-            }
-        });
+        CreateMap<ActionCreateRequest, StepAction>();
+        //    .AfterMap((src, dest) =>
+        //{
+        //    if (dest.Progress == null)
+        //    {
+        //        dest.Progress = new Progress();
+        //    }
+        //});
 
     }
 }

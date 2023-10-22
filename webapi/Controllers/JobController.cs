@@ -65,6 +65,7 @@ namespace webapi.Controllers
             var jobs = _context.Jobs
                 .Include(j => j.Steps)
                 .ThenInclude(s => s.Actions)
+                .ThenInclude(a => a.Progress)
                 .ToList();
 
             var jobResponses = _mapper.Map<IEnumerable<JobResponse>>(jobs);

@@ -7,4 +7,6 @@ public class ProgressResponse
     public TimeSpan Remaining { get; set; }
     public double Percent { get; set; }
     public TimeSpan Duration { get; set; }
+
+    public int ActionId { get; set; }
 }
