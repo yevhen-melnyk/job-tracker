@@ -8,6 +8,16 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddAutoMapper(typeof(JobMappingProfile));
 
+var trustedOrigins = "trustedOrigins";
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: trustedOrigins,
+                      policy =>
+                      {
+                          policy.WithOrigins("https://localhost:4200");
+                      });
+});
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -37,6 +47,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+app.UseCors(trustedOrigins);
 
 // SignalR
 app.MapHub<ProgressHub>("/progressHub");
