@@ -16,7 +16,9 @@
     <None Remove="src\components\**" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="src\modules\job\components\" />
+    <Folder Include="src\environments\" />
+    <Folder Include="src\models\enum\" />
+    <Folder Include="src\modules\job\directives\" />
     <Folder Include="src\services\" />
   </ItemGroup>
 </Project>
