@@ -5,7 +5,6 @@
   border-radius: 4px;
   background-color: #f9f9f9;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  height: 50px;
   width: 270px;
   display: flex;
   -ms-flex-direction: row;
@@ -14,6 +13,10 @@
   align-items: center;
   flex-wrap: wrap;
   position: relative;
+
+  height: auto;
+  min-height: 30px;
+  max-height: 70px;
 }
 
 .progress-bar {

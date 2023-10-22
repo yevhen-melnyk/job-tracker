@@ -17,11 +17,9 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 export class JobItemComponent {
   @Input() job?: JobResponse;
 
-  stepsExpanded: boolean = false; // Flag to check if steps are expanded
+  stepsExpanded: boolean = false;
 
   toggleSteps() {
-    this.stepsExpanded = !this.stepsExpanded; // Toggle the stepsExpanded value
+    this.stepsExpanded = !this.stepsExpanded;
   }
-
-
 }

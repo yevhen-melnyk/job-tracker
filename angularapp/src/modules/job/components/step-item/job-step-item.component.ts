@@ -9,4 +9,7 @@ import { StepResponse } from '../../../../models/step.model';
 export class JobStepItemComponent {
   @Input() step?: StepResponse;
 
+  debugClick() {
+  console.log(this.step);
+  }
 }

@@ -10,7 +10,7 @@
 
   <div class="steps-list" [class.expanded]="stepsExpanded">
     <div *ngIf="stepsExpanded">
-      <app-step-item *ngFor="let step of job?.steps"></app-step-item>
+      <app-step-item *ngFor="let step of job?.steps" [step]="step"></app-step-item>
     </div>
   </div>
 </div>
