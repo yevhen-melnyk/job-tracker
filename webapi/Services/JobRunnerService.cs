@@ -72,6 +72,7 @@ public class JobWorkerService : BackgroundService
             {
                 try
                 {
+                    // TODO: polling is really not needed now
                     var dbContext = scope.ServiceProvider.GetRequiredService<JobDBContext>();
                     var jobsToProcess = await dbContext.Jobs
                                                       .Where(j => j.State == JobStates.InProgress
@@ -269,17 +270,26 @@ public class JobWorkerService : BackgroundService
                 progress.Start = DateTime.Now;
 
                 _relevantProgressDictionary.TryAdd(action.Id, progress);
-
-                while (progress.Remaining > TimeSpan.Zero)
+                if (Random.Shared.Next(0, 20) <= 15)
                 {
-                    await Task.Delay(_settings.ActionProgressUpdateInterval);
-                    progress.Remaining -= TimeSpan.FromMilliseconds(_settings.ActionProgressUpdateInterval);
-                    progress.Percent = (int)(((action.TimeConsume - progress.Remaining) / action.TimeConsume) * 100);
-                    progress.Duration = action.TimeConsume - progress.Remaining;
+                    while (progress.Remaining > TimeSpan.Zero)
+                    {
+                        await Task.Delay(_settings.ActionProgressUpdateInterval);
+                        progress.Remaining -= TimeSpan.FromMilliseconds(_settings.ActionProgressUpdateInterval);
+                        progress.Percent = (int)(((action.TimeConsume - progress.Remaining) / action.TimeConsume) * 100);
+                        progress.Duration = action.TimeConsume - progress.Remaining;
+                    }
+                    progress.End = DateTime.Now;
+                    action.State = ActionState.Success;
+                    await _progressBroadcastService.BroadcastActionCompletion(action);
                 }
-                progress.End = DateTime.Now;
-                action.State = ActionState.Success;
-                await _progressBroadcastService.BroadcastActionCompletion(action);
+                else
+                {
+                    progress.End = DateTime.Now;
+                    progress.Percent = 100;
+                    action.State = ActionState.Failed;
+                    await _progressBroadcastService.BroadcastActionCompletion(action);
+                }
 
             }
             catch (Exception ex)

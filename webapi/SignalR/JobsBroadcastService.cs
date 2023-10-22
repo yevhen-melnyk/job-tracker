@@ -9,11 +9,13 @@ public class JobsBroadcastService
 {
     private readonly IHubContext<ProgressHub> _hubContext;
     private readonly IMapper _mapper;
+    private readonly ILogger<JobsBroadcastService> _logger;
     public JobsBroadcastService(
-            IHubContext<ProgressHub> hubContext, IMapper mapper)
+            IHubContext<ProgressHub> hubContext, IMapper mapper, ILogger<JobsBroadcastService> logger)
     {
         _mapper = mapper;
         _hubContext = hubContext;
+        _logger = logger;
     }
 
     // broadcast action completion
@@ -50,7 +52,14 @@ public class JobsBroadcastService
 
     public async Task BroadcastJobAdded(Job job)
     {
-        await _hubContext.Clients.All.SendAsync(MessageTypesEnum.ReceiveJobAdded.ToString(), job);
-    }
+        try {
+            JobResponse jobResponse = _mapper.Map<JobResponse>(job);
+            await _hubContext.Clients.All.SendAsync(MessageTypesEnum.ReceiveJobAdded.ToString(), jobResponse);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error broadcasting job added", ex);
+        }
+        }
 
 }
